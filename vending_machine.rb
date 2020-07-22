@@ -18,17 +18,27 @@ class VendingMachine
     @drinks = [ Drink.new("cola", 120, 5)]
   end
 
-  def add_drink(name,price,stock)
-    choose_drink(name)
-    @drink.nil? ?  @drinks << Drink.new(name, price, stock) : @drink.stock += stock
-  end
-
   def add_money(money)
     return false unless MONEY.include?(money)
     @slot_money += money
     puts @slot_money
     available_drinks(@drinks)
-    @drinks.map{|drink| drink_information(drink.name) }
+    drink_information
+  end
+
+  def add_drink(name,price,stock)
+    choose_drink(name)
+    @drink.nil? ?  @drinks << Drink.new(name, price, stock) : @drink.stock += stock
+  end
+
+  def buy_drink(name)
+    choose_drink(name)
+    if  @drink.stock > 0  && @slot_money >= @drink.price
+      @drink.stock -= 1
+      @slot_money -= @drink.price
+      @sales += @drink.price
+      return_money
+    end
   end
 
   def available_drinks(drinks)
@@ -41,19 +51,8 @@ class VendingMachine
   end
 
 
-  def drink_information(name)
+  def drink_information
     @drinks.map{|drink|   puts "名前：#{drink.name} 値段：#{drink.price} 在庫：#{drink.stock}" }
-  end
-
-
-  def buy_drink(name)
-    choose_drink(name)
-    if  @drink.stock > 0  && @slot_money >= @drink.price
-      drink.stock -= 1
-      @slot_money -= drink.price
-      @sales += drink.price
-      return_money
-    end
   end
 
   def choose_drink(name)
